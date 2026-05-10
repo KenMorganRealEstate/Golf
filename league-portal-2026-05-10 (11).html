@@ -560,12 +560,12 @@
             let html = `
                 <div class="glass p-8 md:p-20 gold-border bg-black/90 animate-up shadow-[0_0_200px_rgba(212,175,55,0.2)]">
                     <div class="flex flex-col xl:flex-row justify-between items-start gap-8 md:gap-12 mb-20 md:mb-32">
-                        <div class="space-y-8 flex-1 min-w-0">
+                        <div class="space-y-8 flex-1">
                             <button onclick="document.getElementById('playerStatsContainer').classList.add('hidden'); document.getElementById('portalContent').classList.remove('hidden')" class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                                 Back to Hub
                             </button>
-                            <h2 class="text-5xl md:text-8xl font-serif font-black italic text-white tracking-tighter leading-[0.8] mb-4 truncate">${p.name}</h2>
+                            <h2 class="text-[clamp(2.5rem,8vw,6rem)] font-serif font-black italic text-white tracking-tighter leading-[0.8] mb-4 break-words">${p.name}</h2>
                             <div class="inline-flex items-center gap-4 px-6 py-2 bg-golf-gold/10 border border-golf-gold/20 rounded-full">
                                 <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-golf-gold">Tier-1 Professional Profile</span>
                             </div>
@@ -888,10 +888,13 @@
 
             // Generate Sportscast Rundowns for each player in this round
             const playerRundowns = r.round_data.map(p => {
+                const waterHazards = Object.values(p.secondary_stats || {}).filter(s => s.water_hazard).length;
+                const lostBalls = Object.values(p.secondary_stats || {}).filter(s => s.lost_ball).length;
+                const sandAttempts = Object.values(p.secondary_stats || {}).filter(s => s.sand_save !== undefined && s.sand_save !== null).length;
+                const penalties = waterHazards + lostBalls + sandAttempts;
                 const birdies = Object.entries(p.scores).filter(([h, s]) => (s || 0) < 4).length;
                 const eagles = Object.entries(p.scores).filter(([h, s]) => (s || 0) <= 2).length;
                 const pars = Object.entries(p.scores).filter(([h, s]) => (s || 0) === 4).length;
-                const penalties = Object.values(p.secondary_stats || {}).reduce((acc, curr) => acc + (curr.water_hazard ? 1 : 0) + (curr.lost_ball ? 1 : 0), 0);
                 
                 const frontNine = Object.entries(p.scores).slice(0, 9).reduce((a, [h, s]) => a + (s || 0), 0);
                 const backNine = Object.entries(p.scores).slice(9, 18).reduce((a, [h, s]) => a + (s || 0), 0);
@@ -916,7 +919,10 @@
                     narrative,
                     trend,
                     frontNine,
-                    backNine
+                    backNine,
+                    waterHazards,
+                    lostBalls,
+                    sandAttempts
                 };
             });
 
@@ -1005,18 +1011,39 @@
                                             <span class="text-xs font-mono font-black text-white/20 uppercase tracking-widest italic font-style:italic">${pd.trend}</span>
                                         </div>
                                         <p class="text-white/50 text-xs italic font-serif leading-relaxed mb-4">"${pd.narrative}"</p>
-                                        <div class="flex gap-6 mt-4">
+                                        <div class="flex items-center gap-6 mt-4">
                                             <div class="text-center">
-                                                <p class="text-xs text-white/20 uppercase font-black tracking-widest mb-1">Front 9</p>
+                                                <p class="text-[10px] text-white/20 uppercase font-black tracking-widest mb-1">Front 9</p>
                                                 <p class="text-lg font-mono font-black text-white">${pd.frontNine}</p>
                                             </div>
                                             <div class="text-center">
-                                                <p class="text-xs text-white/20 uppercase font-black tracking-widest mb-1">Back 9</p>
+                                                <p class="text-[10px] text-white/20 uppercase font-black tracking-widest mb-1">Back 9</p>
                                                 <p class="text-lg font-mono font-black text-white">${pd.backNine}</p>
                                             </div>
-                                            <div class="flex-1"></div>
+                                            
+                                            <div class="flex-1 flex justify-center gap-4">
+                                                ${pd.waterHazards > 0 ? `
+                                                    <div class="text-center px-3 py-1 bg-cyan-500/5 rounded-lg border border-cyan-500/10">
+                                                        <p class="text-[9px] text-cyan-400/40 uppercase font-black tracking-tighter">Water</p>
+                                                        <p class="text-base font-mono font-black text-cyan-400">${pd.waterHazards}</p>
+                                                    </div>
+                                                ` : ''}
+                                                ${pd.lostBalls > 0 ? `
+                                                    <div class="text-center px-3 py-1 bg-orange-500/5 rounded-lg border border-orange-500/10">
+                                                        <p class="text-[9px] text-orange-400/40 uppercase font-black tracking-tighter">Lost</p>
+                                                        <p class="text-base font-mono font-black text-orange-400">${pd.lostBalls}</p>
+                                                    </div>
+                                                ` : ''}
+                                                ${pd.sandAttempts > 0 ? `
+                                                    <div class="text-center px-3 py-1 bg-yellow-500/5 rounded-lg border border-yellow-500/10">
+                                                        <p class="text-[9px] text-yellow-400/40 uppercase font-black tracking-tighter">Sand</p>
+                                                        <p class="text-base font-mono font-black text-yellow-400">${pd.sandAttempts}</p>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+
                                             <div class="text-right">
-                                                <p class="text-xs text-green-400/40 uppercase font-black tracking-widest mb-1">Aggression</p>
+                                                <p class="text-[10px] text-green-400/40 uppercase font-black tracking-widest mb-1">Aggression</p>
                                                 <p class="text-lg font-mono font-black text-green-400 italic font-style:italic">${pd.birdies} Birds</p>
                                             </div>
                                         </div>
