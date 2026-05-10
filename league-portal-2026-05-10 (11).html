@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -557,19 +558,19 @@
             const avgLeagueScramble = players.reduce((a, b) => a + b.avg_scramble, 0) / players.length;
 
             let html = `
-                <div class="glass p-20 gold-border bg-black/90 animate-up shadow-[0_0_200px_rgba(212,175,55,0.2)]">
-                    <div class="flex flex-col md:flex-row justify-between items-start gap-12 mb-32">
-                        <div class="space-y-8">
-                            <button onclick="document.getElementById('playerStatsContainer').classList.add('hidden'); document.getElementById('portalContent').classList.remove('hidden')" class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
+                <div class="glass p-8 md:p-20 gold-border bg-black/90 animate-up shadow-[0_0_200px_rgba(212,175,55,0.2)]">
+                    <div class="flex flex-col xl:flex-row justify-between items-start gap-8 md:gap-12 mb-20 md:mb-32">
+                        <div class="space-y-8 flex-1 min-w-0">
+                            <button onclick="document.getElementById('playerStatsContainer').classList.add('hidden'); document.getElementById('portalContent').classList.remove('hidden')" class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                                 Back to Hub
                             </button>
-                            <h2 class="text-9xl font-serif font-black italic text-white tracking-tighter leading-[0.8] mb-4">${p.name}</h2>
+                            <h2 class="text-5xl md:text-8xl font-serif font-black italic text-white tracking-tighter leading-[0.8] mb-4 truncate">${p.name}</h2>
                             <div class="inline-flex items-center gap-4 px-6 py-2 bg-golf-gold/10 border border-golf-gold/20 rounded-full">
-                                <span class="text-sm font-black uppercase tracking-[0.4em] text-golf-gold">Tier-1 Professional Profile</span>
+                                <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-golf-gold">Tier-1 Professional Profile</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 origin-right scale-110">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 origin-right w-full xl:w-auto">
                              ${renderStatBox('Career Accuracy', p.avg_score.toFixed(1), 'text-white', "Represents your historical scoring average. This is your career performance baseline.")}
                              ${renderStatBox('All-Time Low', p.best_score === Infinity ? '--' : p.best_score, 'text-green-400', "The single best round score ever recorded in your tactical history.")}
                              ${renderStatBox('Trend Matrix', (trendValue > 0 ? '+' : '') + trendDisp, trendValue <= 0 ? 'text-green-400' : 'text-red-400', "Compares your last 5 rounds against career average. Negative (green) means you're currently outperforming your baseline.")}
@@ -839,10 +840,10 @@
         function renderStatBoxExtended(label, value, valueColor, subLabel, description) {
             const desc = description || 'Current performance benchmark set for this athlete across historical intervals.';
             return `
-                <div onclick="showIntelPopup('${label}', '${subLabel}', '${desc}')" class="p-12 bg-white/[0.03] border border-white/5 rounded-[50px] text-center shadow-inner hover:bg-white/[0.08] transition-all cursor-pointer hover:scale-105 active:scale-95 group">
-                    <p class="text-lg uppercase font-black text-white/50 mb-4 tracking-[0.4em] font-mono group-hover:text-golf-gold transition-colors">${label}</p>
-                    <p class="text-7xl font-mono font-black italic ${valueColor} tracking-tight drop-shadow-2xl mb-4">${value}</p>
-                    <p class="text-base uppercase font-black text-white/30 tracking-widest">${subLabel}</p>
+                <div onclick="showIntelPopup('${label}', '${subLabel}', '${desc}')" class="p-8 bg-white/[0.03] border border-white/5 rounded-[40px] text-center shadow-inner hover:bg-white/[0.08] transition-all cursor-pointer hover:scale-105 active:scale-95 group overflow-hidden">
+                    <p class="text-[10px] uppercase font-black text-white/40 mb-3 tracking-[0.4em] font-mono group-hover:text-golf-gold transition-colors">${label}</p>
+                    <p class="text-4xl md:text-5xl font-mono font-black italic ${valueColor} tracking-tight drop-shadow-2xl mb-3">${value}</p>
+                    <p class="text-[10px] uppercase font-black text-white/20 tracking-widest">${subLabel}</p>
                 </div>
             `;
         }
@@ -868,9 +869,9 @@
         function renderStatBox(label, value, valueColor, description) {
             const desc = description || 'Strategic value: ${value}. Key performance indicator.';
             return `
-                <div onclick="showIntelPopup('${label}', 'Core Metric', '${desc}')" class="p-10 bg-white/[0.03] border border-white/5 rounded-[40px] text-center cursor-pointer hover:bg-white/[0.08] transition-all hover:scale-105 active:scale-95">
-                    <p class="text-lg uppercase font-black text-white/50 mb-3 tracking-widest font-mono">${label}</p>
-                    <p class="text-7xl font-mono font-black italic ${valueColor} tracking-tight drop-shadow-2xl">${value}</p>
+                <div onclick="showIntelPopup('${label}', 'Core Metric', '${desc}')" class="p-8 bg-white/[0.03] border border-white/5 rounded-[32px] text-center cursor-pointer hover:bg-white/[0.08] transition-all hover:scale-105 active:scale-95 min-w-[140px] overflow-hidden">
+                    <p class="text-[10px] uppercase font-black text-white/40 mb-2 tracking-widest font-mono">${label}</p>
+                    <p class="text-4xl md:text-5xl font-mono font-black italic ${valueColor} tracking-tight drop-shadow-2xl">${value}</p>
                 </div>
             `;
         }
